@@ -1,0 +1,10 @@
+{
+  "extends": "@erp/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "module": "node16",
+    "moduleResolution": "node16"
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

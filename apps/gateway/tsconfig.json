@@ -1,0 +1,7 @@
+{
+  "extends": "@erp/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": "./src"
+  }
+}
