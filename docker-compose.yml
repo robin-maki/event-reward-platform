@@ -2,6 +2,7 @@ services:
   gateway:
     image: ghcr.io/robin-maki/event-reward-platform:latest
     command: node apps/gateway/dist/main.js
+    env_file: .env
     ports:
       - '3000:3000'
     networks:
@@ -15,6 +16,7 @@ services:
   auth:
     image: ghcr.io/robin-maki/event-reward-platform:latest
     command: node apps/auth/dist/main.js
+    env_file: .env
     expose:
       - '4000'
     networks:
@@ -26,6 +28,7 @@ services:
   event:
     image: ghcr.io/robin-maki/event-reward-platform:latest
     command: node apps/event/dist/main.js
+    env_file: .env
     expose:
       - '4001'
     networks:

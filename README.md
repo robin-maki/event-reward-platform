@@ -1,84 +1,76 @@
-# Turborepo starter
+# event-reward-platform
 
-This Turborepo starter is maintained by the Turborepo core team.
+## 환경변수
 
-## Using this example
+### JWT_SECRET (필수)
 
-Run the following command:
+JWT 서명 키입니다. 반드시 예측할 수 없는 긴 문자열을 사용해 주세요.
 
-```sh
-npx create-turbo@latest
+### DATABASE_URL
+
+데이터베이스 연결 문자열입니다. 기본값은 'mongodb://mongo:27017/erp'입니다.
+
+### GATEWAY_PORT
+
+게이트웨이 서비스의 포트 번호입니다. 기본값은 3000입니다.
+
+### AUTH_SERVICE_HOST
+
+인증 서비스의 호스트 이름입니다. 기본값은 'auth'입니다.
+
+### AUTH_SERVICE_PORT
+
+인증 서비스의 포트 번호입니다. 기본값은 4000입니다.
+
+### EVENT_SERVICE_HOST
+
+이벤트 서비스의 호스트 이름입니다. 기본값은 'event'입니다.
+
+### EVENT_SERVICE_PORT
+
+이벤트 서비스의 포트 번호입니다. 기본값은 4001입니다.
+
+## 실행
+
+> `JWT_SECRET` 환경변수 설정을 잊지 마세요!!
+
+```bash
+docker compose up -d
 ```
 
-## What's inside?
+## 이벤트 조건 설정
 
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
+```typescript
+type EventConditions =
+  | {
+      url: string;
+      condition: any;
+    }
+  | {
+      and: EventConditions[];
+    }
+  | {
+      or: EventConditions[];
+    };
 ```
 
-### Develop
+`url` 필드는 이벤트 조건 만족 여부를 체크하기 위해 요청되는 URL입니다. `{accountId}`를 url에 삽입하면 이벤트 조건 체크 시 현재 계정의 ID로 치환됩니다. 중괄호를 입력할 때는 {{두번}} 입력하면 이스케이프됩니다.
+condition 필드는 응답 JSON의 조건을 판별하는 조건식입니다. [Zodex](https://commonbaseapp.github.io/zodex/) 문법을 사용해 Zod 조건문을 직렬화해 입력합니다.
 
-To develop all apps and packages, run the following command:
+### 예시
 
+```json
+{
+  "url": "https://jsonplaceholder.typicode.com/posts/1?userId={accountId}",
+  "condition": {
+    "type": "object",
+    "properties": {
+      "userId": {
+        "type": "number",
+        "min": 1,
+        "minInclusive": true
+      }
+    }
+  }
+}
 ```
-cd my-turborepo
-pnpm dev
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
