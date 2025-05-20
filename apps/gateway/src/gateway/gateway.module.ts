@@ -3,6 +3,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AccountController } from './account.controller';
 import { ClaimController } from './claim.controller';
 import { EventController } from './event.controller';
+import { env } from '@erp/env';
 
 @Module({
   imports: [
@@ -11,16 +12,16 @@ import { EventController } from './event.controller';
         name: 'AUTH_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
-          port: 4000,
+          host: env.AUTH_SERVICE_HOST,
+          port: env.AUTH_SERVICE_PORT,
         },
       },
       {
         name: 'EVENT_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
-          port: 4001,
+          host: env.EVENT_SERVICE_HOST,
+          port: env.EVENT_SERVICE_PORT,
         },
       },
     ]),

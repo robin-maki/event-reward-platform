@@ -19,8 +19,8 @@ import { LocalStrategy } from './local.strategy';
         name: 'AUTH_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
-          port: 4000,
+          host: env.AUTH_SERVICE_HOST,
+          port: env.AUTH_SERVICE_PORT,
         },
       },
     ]),

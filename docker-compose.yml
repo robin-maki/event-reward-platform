@@ -1,0 +1,46 @@
+services:
+  gateway:
+    image: ghcr.io/robin-maki/event-reward-platform:latest
+    command: node apps/gateway/dist/main.js
+    ports:
+      - '3000:3000'
+    networks:
+      - internal_net
+      - external_net
+    restart: unless-stopped
+    depends_on:
+      - auth
+      - event
+
+  auth:
+    image: ghcr.io/robin-maki/event-reward-platform:latest
+    command: node apps/auth/dist/main.js
+    expose:
+      - '4000'
+    networks:
+      - internal_net
+    restart: unless-stopped
+    depends_on:
+      - mongo
+
+  event:
+    image: ghcr.io/robin-maki/event-reward-platform:latest
+    command: node apps/event/dist/main.js
+    expose:
+      - '4001'
+    networks:
+      - internal_net
+    restart: unless-stopped
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:8.0
+    networks:
+      - internal_net
+    restart: unless-stopped
+
+networks:
+  internal_net:
+    internal: true
+  external_net:
