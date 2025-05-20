@@ -18,11 +18,13 @@ export class AccountService {
 
     const hashedPassword = await hash(password);
 
+    const existingAnyAccount = await this.accountModel.findOne({});
+
     const account = await this.accountModel.create({
       email,
       password: hashedPassword,
       name,
-      role: AccountRole.USER,
+      role: existingAnyAccount ? AccountRole.USER : AccountRole.ADMIN,
     });
 
     await account.save();
