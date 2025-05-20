@@ -1,26 +1,30 @@
+ARG APP_NAME=gateway
+
 FROM node:18-alpine AS builder
+ARG APP_NAME
 
 RUN npm install -g pnpm
 
 WORKDIR /usr/src/app
 
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
-
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
 COPY . .
-RUN pnpm run build
+
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter @erp/${APP_NAME} run build
 
 FROM node:18-alpine AS production
+ARG APP_NAME
 
 RUN npm install -g pnpm
 
 WORKDIR /usr/src/app
 
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --prod --frozen-lockfile
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
+COPY --from=builder /usr/src/app/apps/${APP_NAME}/dist ./apps/${APP_NAME}/dist
 
-COPY --from=builder /usr/src/app/dist ./dist
+RUN pnpm install --prod --filter @erp/${APP_NAME} --frozen-lockfile
 
 EXPOSE 3000
 
-CMD ["pnpm", "run", "start:prod"] 
+CMD ["node", "apps/${APP_NAME}/dist/main.js"] 
